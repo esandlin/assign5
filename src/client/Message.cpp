@@ -10,7 +10,11 @@
 #include <ctime>
 #include <stdlib.h>
 #include "../client/MessageGui.cpp"
-#include "../client/MessageLibrary.cpp"
+
+
+#include <jsonrpccpp/client/connectors/httpclient.h>
+
+using namespace jsonrpc;
 using namespace std;
 
 /**
@@ -315,6 +319,15 @@ public:
 };
 
 int main() {
+
+//	HttpClient httpclient("http://localhost:1099");
+//	StubClient c(httpclient);
+//	try {
+//		cout << c.sayHello("Peter") << endl;
+//		c.notifyServer();
+//	} catch (JsonRpcException e) {
+//		cerr << e.what() << endl;
+//	}
 
 //	MessageLibrary *aMessage = new MessageLibrary();
 //	aMessage->initGroupFromJsonFile("admin.json");

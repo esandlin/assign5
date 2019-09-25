@@ -11,9 +11,9 @@
 	<property name="classes.dir" value="classes" />
 	<property name="host.name" value="127.0.0.1" />
 	<!-- localhost-->
-	<property name="port.num" value="8080" />
+	<property name="port.num" value="1099" />
 	<!-- Dport1099-->
-	<property name="json.file.name" value="StudentLibraryMethods.json" />
+	<property name="json.file.name" value="LibraryMethods.json" />
 	<property environment="env" />
 
 	<!--Set the ostype property: <property name="ostype" value="${env.OSTYPE}"/>-->
@@ -185,7 +185,7 @@
 			</includepath>
 			<libset dir="${server.lib.path}" libs="${server.lib.list}"/>
 			<fileset dir="${src.dir}/server"
-	                  includes="Student.cpp, StudentCollection.cpp, StudentServer.cpp"/>
+	                  includes="ServerStub.cpp, MessageLibrary.cpp"/>
 		</cc>
 	</target>
 
