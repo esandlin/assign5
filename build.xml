@@ -163,33 +163,33 @@
 		<delete file="messageserverstub.h"/>
 	</target>
 
-	<target name="build.client" depends="clean, prepare" description="Clean then build cpp server and cpp client">
+	<target name="build.server" depends="clean, prepare" description="Clean then build cpp server and cpp client">
 		<cc outtype="executable" subsystem="console" outfile="${dist.dir}/Message" objdir="${obj.dir}">
 			<compilerarg value="-std=c++14" />
 			<includepath>
 				<dirset dir="/" includes="usr/include,usr/local/include" />
 			</includepath>
 			<libset dir="/usr/lib" libs="stdc++,fltk" />
-			<fileset dir="${src.cpp.dir}/client/" includes="MessageGui.cpp, Message.cpp" />
+			<fileset dir="${src.cpp.dir}/server/" includes="MessageGui.cpp, Message.cpp" />
 		</cc>
 	</target>
 
-	<target name="build.server" depends="generate.server.stub">
+	<target name="build.client" depends="generate.server.stub">
 		<cc outtype="executable" subsystem="console"
-	         outfile="${dist.dir}/studentRPCServer"
+	         outfile="${dist.dir}/Assign5"
 	         objdir="${obj.dir}/server">
 			<compiler name="g++"/>
-			<compilerarg value="${cxxflag}"/>
+			<compilerarg value="-std=c++14"/>
 			<includepath>
 				<pathelement path="${includepath}"/>
 			</includepath>
 			<libset dir="${server.lib.path}" libs="${server.lib.list}"/>
-			<fileset dir="${src.dir}/server"
-	                  includes="ServerStub.cpp, MessageLibrary.cpp"/>
+			<fileset dir="${src.dir}/client"
+	                  includes="client.cpp"/>
 		</cc>
 	</target>
 
-	<target name="client" depends="build.client">
+	<target name="server" depends="build.server">
 		<exec executable="./bin/Message" />
 	</target>
 

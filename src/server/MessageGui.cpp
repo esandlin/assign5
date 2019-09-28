@@ -2,6 +2,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Output.H>
+#include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Text_Display.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Input_Choice.H>
@@ -110,6 +111,11 @@ protected:
 	Fl_Button *exportButt;
 
 	/**
+	 * menubar is the Fl_Menu_Bar object containing all of the menuitems for the Gui.
+	 */
+	Fl_Menu_Bar *menubar;
+
+	/**
 	 * headerFCB is the Fl_Check_Browser on the left side of the window.
 	 * This area is for displaying the message headers.
 	 */
@@ -119,6 +125,15 @@ public:
 	MessageGui(const char *name = 0) :
 			Fl_Window(965, 400, name) {
 		begin();
+
+		menubar = new Fl_Menu_Bar(0, 0, this->w(), 25);
+		menubar->add("File/Save");
+		menubar->add("File/Restore");
+		menubar->add("File/Tree Refresh");
+		menubar->add("File/Exit");
+		menubar->add("Media/Add");
+		menubar->add("Media/Remove");
+		menubar->add("Media/Play");
 
 		// create the list of message headers on the left side of the GUI
 		headerFCB = new Fl_Check_Browser(25, 75, 345, 300, "");

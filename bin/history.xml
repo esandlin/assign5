@@ -1,9 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<history>
-   <processor signature="gcc -L../../../../../usr/lib -lstdc++ -lfltk">
-      <target file="Message" lastModified="16d692c58a8">
-         <source file="../obj/MessageGui.o" lastModified="16d692c54c0"/>
-         <source file="../obj/Message.o" lastModified="16d692c58a8"/>
-      </target>
-   </processor>
-</history>

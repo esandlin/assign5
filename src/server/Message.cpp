@@ -9,8 +9,8 @@
 #include <chrono>
 #include <ctime>
 #include <stdlib.h>
-#include "../client/MessageGui.cpp"
-
+//#include "MessageLibrary.cpp"
+#include "../server/MessageGui.cpp"
 
 #include <jsonrpccpp/client/connectors/httpclient.h>
 
@@ -122,47 +122,18 @@ class Message: public MessageGui {
 		Message *anInstance = (Message*) userdata;
 		std::cout << "You clicked Reply" << std::endl;
 		Fl_Multiline_Input *messageFMI = anInstance->messageFMI;
-		Fl_Input *dateFI = anInstance->dateFI;
 		Fl_Input *subjectFI = anInstance->subjectFI;
 		Fl_Input *toFI = anInstance->toFI;
 		Fl_Input *fromFI = anInstance->fromFI;
 		Fl_Check_Browser *headers = anInstance->headerFCB;
 
-		// clear all existing entries from the list of message headers
-		headers->clear();
+		fromFI->position(705, 75);
+		toFI->position(400, 75);
 
-		// lets setup some sample entries in the FCB
-		// first get the date and place its string form into dateFI
-		// get the time in a string
-		auto aClk = std::chrono::system_clock::now();
-		auto aTime = std::chrono::system_clock::to_time_t(aClk);
-		std::string aDateStr(ctime(&aTime));
-		// the conversion to string adds a new line at the end of the string. Trim it.
-		std::string trimmed(trimMe(aDateStr));
-		// load the date field with the current time in string form
-		//dateFI->value(ctime(&aTime));
-		dateFI->value(trimmed.c_str());
-		std::cout << "date un-trimmed: " << aDateStr
-				<< ". Date from the UI control: " << dateFI->value()
-				<< std::endl;
-		// get the instance's userId string so we know who is sending messages
-		std::string userId = anInstance->userId;
-		// all FLTK controls are loaded via c strings, not c++ string objects.
-		headers->add((userId + "   " + trimmed).c_str());
-		// select this first element in the list. the first arg is the index into the
-		// list (1st entry) beginning at 1. The second arg is 0 for unchecked and 1 for
-		// checked.
-		headers->checked(1, 1);
-		// fill in the corresponding fields as if we are displaying a real message.
-		toFI->value(userId.c_str());
-		fromFI->value(userId.c_str());
-		dateFI->value(trimmed.c_str());
-		subjectFI->value("Sample Message");
+		subjectFI->value("Re:");
 		std::string msg(
-				"Hello,\n    FLTK stands for Full Light ToolKit\nEnjoy!");
+				"Reply");
 		messageFMI->value(msg.c_str());
-		// add another header
-		headers->add("Kevin.Gary   Thu Dec 20 1:25:00 2018");
 	}
 
 	static void ClickedSend(Fl_Widget *w, void *userdata) {
@@ -181,29 +152,6 @@ class Message: public MessageGui {
 		Fl_Input *toFI = anInstance->toFI;
 		Fl_Input *fromFI = anInstance->fromFI;
 		Fl_Check_Browser *headers = anInstance->headerFCB;
-
-		auto aClk = std::chrono::system_clock::now();
-		auto aTime = std::chrono::system_clock::to_time_t(aClk);
-		std::string aDateStr(ctime(&aTime));
-		std::string trimmed(trimMe(aDateStr));
-		dateFI->value(trimmed.c_str());
-		std::cout << "date un-trimmed: " << aDateStr
-				<< ". Date from the UI control: " << dateFI->value()
-				<< std::endl;
-		// get the instance's userId string so we know who is sending messages
-		std::string userId = anInstance->userId;
-		// all FLTK controls are loaded via c strings, not c++ string objects.
-		headers->add((userId + "   " + trimmed).c_str());
-		headers->checked(1, 1);
-		// fill in the corresponding fields as if we are displaying a real message.
-		toFI->value(userId.c_str());
-		fromFI->value(userId.c_str());
-		dateFI->value(trimmed.c_str());
-		subjectFI->value("Sample Message");
-		std::string msg("Send");
-		messageFMI->value(msg.c_str());
-		// add another header
-		headers->add("Captain.Hook   Thu Dec 20 1:25:00 2018");
 	}
 
 	static void ClickedExport(Fl_Widget *w, void *userdata) {
@@ -226,29 +174,6 @@ class Message: public MessageGui {
 		Fl_Input *toFI = anInstance->toFI;
 		Fl_Input *fromFI = anInstance->fromFI;
 		Fl_Check_Browser *headers = anInstance->headerFCB;
-		auto aClk = std::chrono::system_clock::now();
-		auto aTime = std::chrono::system_clock::to_time_t(aClk);
-		std::string aDateStr(ctime(&aTime));
-		std::string trimmed(trimMe(aDateStr));
-		dateFI->value(trimmed.c_str());
-		std::cout << "date un-trimmed: " << aDateStr
-				<< ". Date from the UI control: " << dateFI->value()
-				<< std::endl;
-
-		// get the instance's userId string so we know who is sending messages
-		std::string userId = anInstance->userId;
-		// all FLTK controls are loaded via c strings, not c++ string objects.
-		headers->add((userId + "   " + trimmed).c_str());
-		headers->checked(1, 1);
-		// fill in the corresponding fields as if we are displaying a real message.
-		toFI->value(userId.c_str());
-		fromFI->value(userId.c_str());
-		dateFI->value(trimmed.c_str());
-		subjectFI->value("Sample Message Sent");
-		std::string msg("just a bunch of stuff");
-		messageFMI->value(msg.c_str());
-		// add another header
-		headers->add("Eric.Sandlin   Fri Sept 20 1:25:00 2018");
 	}
 
 	static void ClickedDelete(Fl_Widget *w, void *userdata) {
@@ -259,7 +184,10 @@ class Message: public MessageGui {
 		Message *anInstance = (Message*) userdata;
 		Fl_Input *from = anInstance->fromFI;
 		std::string fr(from->value());
-		from->clear_output();
+		Fl_Check_Browser *headers = anInstance->headerFCB;
+
+		// clear all existing entries from the list of message headers
+		headers->clear_active();
 
 		std::cout << "You clicked Delete" << std::endl;
 	}
@@ -320,34 +248,40 @@ public:
 
 int main() {
 
-//	HttpClient httpclient("http://localhost:1099");
-//	StubClient c(httpclient);
-//	try {
-//		cout << c.sayHello("Peter") << endl;
-//		c.notifyServer();
-//	} catch (JsonRpcException e) {
-//		cerr << e.what() << endl;
-//	}
-
-//	MessageLibrary *aMessage = new MessageLibrary();
-//	aMessage->initGroupFromJsonFile("admin.json");
-//	std::cout << endl << "Done initializing from admin.json" << endl;
-//
-//	std::vector<string> names = aMessage->getNames();
-//	cout << endl;
-//	for (int i = 0; i < names.size(); i++) {
-//		std::cout << "found " << names[i] << endl;
-//	}
-//
-//	MessageLibrary usr = aMessage->get("Joe");
-//	cout << endl;
-//	usr.print();
-//
-//	cout << endl;
-//	aMessage->printGroup();
-//
-//	aMessage->toJsonFile("adminFromCPP.json");
-//	std::cout << "Done writing a json file. I quit." << endl;
+//	// invoke with ./bin/studentRPCServer 8080
+//	   int port = 1099;
+//	   if(argc > 1){
+//	      port = atoi(argv[1]);
+//	   }
+//	   HttpServer httpserver(port);
+//	   MessageLibrary ss(httpserver, port);
+//	   // to use tcp sockets instead of http uncomment below (comment above), and the include
+//	   // for tcpsocketserver.h above. If not running locally, you will need to input ip & port
+//	   // from command line for both server and client programs.
+//	   //TcpSocketServer tcpserver("localhost",port);
+//	   //StudentServer ss(tcpserver, port);
+//	   std::atexit(exiting);
+//	   auto ex = [] (int i) {cout << "server terminating with signal " << i << endl;
+//	                         // ss.StopListening();
+//	                         exit(0);
+//	                         //return 0;
+//	                        };
+//	   // ^C
+//	   std::signal(SIGINT, ex);
+//	   // abort()
+//	   std::signal(SIGABRT, ex);
+//	   // sent by kill command
+//	   std::signal(SIGTERM, ex);
+//	   // ^Z
+//	   std::signal(SIGTSTP, ex);
+//	   cout << "Student collection server listening on port " << port
+//	      //<< " press return/enter to quit." << endl;
+//	        << " use ps to get pid. To quit: kill -9 pid " << endl;
+//	   ss.StartListening();
+//	   while(true){
+//	   }
+//	   //int c = getchar();
+//	   ss.StopListening();
 
 	Message cm("Eric Sandlin's Message Browser");
 	return (Fl::run());

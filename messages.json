@@ -9,7 +9,7 @@
         "params":[ ],
         "returns": true
     },
-    {   // add(JsonOfAStudent) --> bool
+    {   // add(JsonOfAMessage) --> bool
         "method": "add",
         "params":[{ }],
         "returns": true
@@ -19,7 +19,7 @@
         "params":["Tim"],
         "returns": true
     },
-    {   // get(string) --> jsonOfAStudent
+    {   // get(string) --> jsonOfAMessage
         "method": "get",
         "params":["Tim"],
         "returns":{ }
