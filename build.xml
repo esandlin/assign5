@@ -13,7 +13,7 @@
 	<!-- localhost-->
 	<property name="port.num" value="1099" />
 	<!-- Dport1099-->
-	<property name="json.file.name" value="LibraryMethods.json" />
+	<property name="json.file.name" value="messages.json" />
 	<property environment="env" />
 
 	<!--Set the ostype property: <property name="ostype" value="${env.OSTYPE}"/>-->
@@ -44,7 +44,7 @@
 	</path>
 
 	<target name="targets">
-		<echo message="targets are: targets, clean, prepare, build.server, build.client, server, and client" />
+		<echo message="targets are: targets, clean, prepare, generate.client.stub, generate.server.stub, build.server, build.client, server, and client" />
 		<echo message="base directory is: ${basedir} and ostype is ${ostype}" />
 		<echo message="execute cpp server with: ./bin/Message ${port.num}" />
 		<echo message="execute cpp client with: ./bin/studentRPCClient http://${host.name}:${port.num}" />
@@ -69,7 +69,6 @@
 		<echo message="home defined as: ${env.HOME}" />
 		<mkdir dir="${classes.dir}"/>
 		<mkdir dir="${dist.dir}" />
-		<mkdir dir="log" />
 		<mkdir dir="${obj.dir}/client" />
 		<mkdir dir="${obj.dir}/server" />
 		<if>
@@ -173,19 +172,15 @@
 			<fileset dir="${src.cpp.dir}/server/" includes="MessageGui.cpp, Message.cpp" />
 		</cc>
 	</target>
-
-	<target name="build.client" depends="generate.server.stub">
-		<cc outtype="executable" subsystem="console"
-	         outfile="${dist.dir}/Assign5"
-	         objdir="${obj.dir}/client">
-			<compiler name="g++"/>
-			<compilerarg value="-std=c++14"/>
+	
+	<target name="build.client" depends="clean, prepare" description="Clean then build cpp client">
+		<cc outtype="executable" subsystem="console" outfile="${dist.dir}/Message" objdir="${obj.dir}">
+			<compilerarg value="-std=c++14" />
 			<includepath>
-				<pathelement path="${includepath}"/>
+				<dirset dir="/" includes="usr/include,usr/local/include" />
 			</includepath>
-			<libset dir="${server.lib.path}" libs="${server.lib.list}"/>
-			<fileset dir="${src.dir}/client"
-	                  includes="client.cpp"/>
+			<libset dir="/usr/lib" libs="stdc++,fltk" />
+			<fileset dir="${src.cpp.dir}/client/" includes="Client.cpp" />
 		</cc>
 	</target>
 
