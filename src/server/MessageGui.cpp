@@ -13,6 +13,9 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include <FL/Fl_Tree.H>
+#include <FL/Fl_Tree_Item.H>
+
 using namespace std;
 
 /**
@@ -121,6 +124,15 @@ protected:
 	 */
 	Fl_Check_Browser *headerFCB;
 
+	/**
+	 * tree is the Fl_Tree object that occupies the left side of the window.
+	 * This tree control provides the ability to select nodes. The app uses
+	 * this selection functionality to request
+	 * actions based on the selection, such as remove a media item, or play a media
+	 * file.
+	 */
+	Fl_Tree *tree;
+
 public:
 	MessageGui(const char *name = 0) :
 			Fl_Window(965, 400, name) {
@@ -154,6 +166,15 @@ public:
 		replyButt = new Fl_Button(300, 25, 100, 25, "Reply");
 		sendButt = new Fl_Button(420, 25, 100, 25, "Send");
 		exportButt = new Fl_Button(540, 25, 100, 25, "Export");
+
+		// create a tree control at position x=10, y=10. Its 150 pixels wide
+		// and window height less 45 pixels high. Add some sample tree nodes.
+		tree = new Fl_Tree(25, 75, 345, 300);
+		tree->add("Flintstones/Fred");
+		tree->add("Flintstones/Wilma");
+		tree->close("/Flintstones");
+		tree->root_label(name);
+		tree->hide();
 
 		end();
 		show();

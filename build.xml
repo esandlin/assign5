@@ -177,7 +177,7 @@
 	<target name="build.client" depends="generate.server.stub">
 		<cc outtype="executable" subsystem="console"
 	         outfile="${dist.dir}/Assign5"
-	         objdir="${obj.dir}/server">
+	         objdir="${obj.dir}/client">
 			<compiler name="g++"/>
 			<compilerarg value="-std=c++14"/>
 			<includepath>
@@ -191,6 +191,10 @@
 
 	<target name="server" depends="build.server">
 		<exec executable="./bin/Message" />
+	</target>
+	
+	<target name="client" depends="build.server">
+		<exec executable="./dir/Client" />
 	</target>
 
 </project>

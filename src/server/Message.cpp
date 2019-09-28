@@ -11,7 +11,8 @@
 #include <stdlib.h>
 //#include "MessageLibrary.cpp"
 #include "../server/MessageGui.cpp"
-
+#include <FL/Fl_Tree.H>
+#include <FL/Fl_Tree_Item.H>
 #include <jsonrpccpp/client/connectors/httpclient.h>
 
 using namespace jsonrpc;
@@ -126,9 +127,11 @@ class Message: public MessageGui {
 		Fl_Input *toFI = anInstance->toFI;
 		Fl_Input *fromFI = anInstance->fromFI;
 		Fl_Check_Browser *headers = anInstance->headerFCB;
+		Fl_Tree *tree = anInstance->tree;
 
-		fromFI->position(705, 75);
-		toFI->position(400, 75);
+		// clear all existing entries from the list of message headers
+		headers->clear();
+		tree->show();
 
 		subjectFI->value("Re:");
 		std::string msg(
@@ -187,7 +190,7 @@ class Message: public MessageGui {
 		Fl_Check_Browser *headers = anInstance->headerFCB;
 
 		// clear all existing entries from the list of message headers
-		headers->clear_active();
+		headers->clear();
 
 		std::cout << "You clicked Delete" << std::endl;
 	}
@@ -228,6 +231,78 @@ class Message: public MessageGui {
 				<< std::endl;
 	}
 
+	   // Static tree callback method
+	   static void TreeCallbackS(Fl_Widget*w, void*data) {
+	      Message *o = (Message*)data;
+	      o->TreeCallback(); //call the instance callback method
+	   }
+
+	   /**
+	    * TreeCallback is a callback for tree selections, deselections, expand or
+	    * collapse.
+	    */
+	   void TreeCallback() {
+	      // Find item that was clicked
+	      Fl_Tree_Item *item = (Fl_Tree_Item*)tree->item_clicked();
+	      std::cout << "Tree callback. Current selection is: ";
+	      if ( item ) {
+	         std::cout << item->label();
+	      } else {
+	         std::cout << "none";
+	      }
+	      std::cout << endl;
+	      std::string aStr("unknown");
+	      std::string aTitle(item->label());
+	      switch ( tree->callback_reason() ) {  // reason callback was invoked
+	        case       FL_TREE_REASON_NONE: {aStr = "none"; break;}
+	        case     FL_TREE_REASON_OPENED: {aStr = "opened";break;}
+	        case     FL_TREE_REASON_CLOSED: {aStr = "closed"; break;}
+	        case   FL_TREE_REASON_SELECTED: {
+	           aStr = "selection";
+	           break;
+	        }
+	        case FL_TREE_REASON_DESELECTED: {aStr = "deselected"; break;}
+	      default: {break;}
+	      }
+	   std::cout << "Callback reason: " << aStr.c_str() << endl;
+	   }
+
+	   // local method to build the tree in the GUI left panel.
+	   void buildTree(){
+	      std::array<std::string,3> musicList = {"Come Monday","Fins","Crazy"};
+	      std::array<std::string,3> musicAlbum = {"Greatest Hits","Greatest Hits","Single"};
+	      std::array<std::string,2> videoList = {"Minions Banana Song","Minions Banana"};
+	      std::array<std::string,2> videoGenre = {"Animation","Animation"};
+	      cout << "Adding tree nodes for music titles: ";
+	      tree->clear();
+	      for(int i=0; i<musicList.size(); i++){
+	         cout << musicList[i] << ", ";
+	         string title = musicList[i];
+	         string album = musicAlbum[i];
+	         std::stringstream stream;
+	         stream << "Music"
+	                << "/"
+	                << album
+	                << "/" << title;
+	         tree->add(stream.str().c_str());
+	      }
+	      cout << endl << "Adding tree nodes for video titles: ";
+	      for(int i=0; i<videoList.size(); i++){
+	         cout << " " << videoList[i] << ", ";
+	         string title = videoList[i];
+	         string genre = videoGenre[i];
+	         std::stringstream stream;
+	         stream << "Video"
+	                << "/"
+	                << genre
+	                << "/" << title;
+	         tree->add(stream.str().c_str());
+	      }
+	      cout << endl;
+	      tree->root();
+	      tree->redraw();
+	   }
+
 public:
 	std::string userId;
 	Message(const char *name = 0) :
@@ -239,6 +314,9 @@ public:
 		exportButt->callback(ClickedExport, (void*) this);
 		headerFCB->callback(SelectedHeader, (void*) this);
 		headerFCB->when(FL_WHEN_CHANGED);
+
+		buildTree();
+	    tree->callback(TreeCallbackS, (void*)this);
 
 		callback(ClickedX);
 
